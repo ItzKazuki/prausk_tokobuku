@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -30,5 +32,31 @@ class OrderController extends Controller
         }
 
         return view('user.order.payment', compact('order'));
+    }
+
+    public function cancel(Request $request, string $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:shipped,completed,cancelled',
+        ]);
+
+        $order = Order::findOrFail($id);
+
+        if ($order->status === 'completed' || $order->status === 'shipped') {
+            return redirect()->back()->with('error', 'Status order tidak dapat diubah!');
+        }
+
+        if ($request->status === 'cancelled') {
+            DB::transaction(function () use ($order) {
+                foreach ($order->orderDetails as $detail) {
+                    $detail->book->increment('stock', $detail->qty);
+                }
+
+                $order->update(['status' => 'cancelled']);
+            });
+        }
+
+        return redirect()->route('user.order.index')
+            ->with('success', 'Status berhasil diperbarui!');
     }
 }

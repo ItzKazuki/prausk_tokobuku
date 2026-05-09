@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -75,7 +76,17 @@ class OrderController extends Controller
 
         $filteredData = array_filter($data, fn ($value) => ! is_null($value));
 
-        $order->update($filteredData);
+        if ($request->status === 'cancelled') {
+            DB::transaction(function () use ($order) {
+                foreach ($order->orderDetails as $detail) {
+                    $detail->book->increment('stock', $detail->qty);
+                }
+
+                $order->update(['status' => 'cancelled']);
+            });
+        } else {
+            $order->update($filteredData);
+        }
 
         return redirect()->route('admin.orders.index')
             ->with('success', 'Status berhasil diperbarui!');

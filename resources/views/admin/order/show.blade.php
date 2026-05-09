@@ -22,23 +22,23 @@
                 {{-- Status Badge Dinamis --}}
                 @switch($order->status)
                     @case('pending')
-                        <div class="badge badge-warning p-4 font-bold uppercase">Pending</div>
+                        <div class="badge badge-warning p-4 font-bold">Pending</div>
                     @break
 
                     @case('processing')
-                        <div class="badge badge-info p-4 font-bold uppercase text-white">Proses</div>
+                        <div class="badge badge-info p-4 font-bold text-white">Proses</div>
                     @break
 
                     @case('shipped')
-                        <div class="badge badge-accent p-4 font-bold uppercase text-white">Dikirim</div>
+                        <div class="badge badge-accent p-4 font-bold text-white">Dikirim</div>
                     @break
 
                     @case('completed')
-                        <div class="badge badge-success p-4 font-bold uppercase text-white">Selesai</div>
+                        <div class="badge badge-success p-4 font-bold text-white">Selesai</div>
                     @break
 
                     @default
-                        <div class="badge badge-error p-4 font-bold uppercase text-white">Batal</div>
+                        <div class="badge badge-error p-4 font-bold text-white">Batal</div>
                 @endswitch
 
                 <button onclick="window.print()" class="btn btn-ghost btn-sm border border-base-300">
@@ -49,6 +49,8 @@
                     </svg>
                     Print
                 </button>
+
+                <a href="{{ route('invoices.order.show', ['orderNumber' => $order->code]) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost border border-base-300">Invoice</a>
             </div>
         </div>
 

@@ -102,15 +102,36 @@
                     {{-- Footer Detail --}}
                     <div class="mt-6 pt-4 border-t border-dashed border-base-300 flex justify-between items-center">
                         <div>
+                            @if ($order->tracking_number)
+                                <p class="text-sm text-gray-500">Resi: {{ $order->tracking_number }}</p>
+                            @endif
                             <p class="text-xs text-gray-500 italic">Terima kasih telah berbelanja di Kabuku!</p>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <a href="https://wa.me/62859102628529?text=Halo%2C%20saya%20mau%20tanya%20mengenai%20pesanan%20saya%20dengan%20nomor%20transaksi%20{{ $order->code }}"
                                 target="_blank" class="btn btn-sm btn-primary">Tanya ke penjual</a>
 
-                                @if ($order->snap_token)
-                                    <a href="{{ route('user.order.pay', ['id' => $order->id]) }}" class="btn btn-success btn-sm">Bayar Sekarang</a>
-                                @endif
+                            @if ($order->snap_token && $order->status == 'pending')
+                                <a href="{{ route('user.order.pay', ['id' => $order->id]) }}"
+                                    class="btn btn-success btn-sm">Bayar Sekarang</a>
+                            @endif
+
+                            {{-- Tombol Batalkan Transaksi --}}
+                            @if ($order->status == 'processing' || $order->status == 'pending')
+                                <form action="{{ route('user.order.cancel', $order->id) }}" method="POST"
+                                    class="inline">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="status" value="cancelled">
+                                    <button class="btn btn-sm btn-error btn-outline shadow-sm" type="submit"
+                                        onclick="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')">
+                                        Batalkan
+                                    </button>
+                                </form>
+                            @endif
+
+                            <a href="{{ route('invoices.order.show', ['orderNumber' => $order->code]) }}"
+                                class="btn btn-sm btn-ghost border border-base-300">Invoice</a>
                         </div>
                     </div>
                 </div>

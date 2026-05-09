@@ -20,7 +20,13 @@
                 <input type="password" class="form-control" id="floatingInput1" placeholder="Password" name="password" />
             </div>
             <div class="form-group mb-3">
-                <input type="password" class="form-control" id="floatingInput1" placeholder="Repeat Password" name="password_confirmation" />
+                <input type="password" class="form-control" id="floatingInput1" placeholder="Repeat Password"
+                    name="password_confirmation" />
+            </div>
+
+            <div class="form-group mb-3">
+                {{-- <input type="email" class="form-control" id="floatingInput" placeholder="Email Address" name="email" /> --}}
+                <textarea class="form-control" name="address" id="address" rows="5" placeholder="Alamar Lengkap"></textarea>
             </div>
 
             <div class="d-grid mt-4">
